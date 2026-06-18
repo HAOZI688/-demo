@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "name": "赘婿归来",
+    "genre": "战神赘婿",
+    "description": "经典赘婿题材",
+    "status": "active",
+    "script_count": 2
+  },
+  {
+    "id": 2,
+    "name": "甜宠一夏",
+    "genre": "甜宠闪婚",
+    "description": "都市甜宠",
+    "status": "active",
+    "script_count": 1
+  }
+]

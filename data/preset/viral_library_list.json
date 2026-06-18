@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "title": "赘婿归来",
+    "genre": "战神赘婿",
+    "platform": "抖音",
+    "plays": "1200万",
+    "score": 88,
+    "tier": "S",
+    "created_at": "2026-06-15"
+  },
+  {
+    "id": 2,
+    "title": "前夫他疯了",
+    "genre": "豪门复仇",
+    "platform": "快手",
+    "plays": "800万",
+    "score": 82,
+    "tier": "S",
+    "created_at": "2026-06-14"
+  }
+]

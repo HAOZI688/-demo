@@ -1,0 +1,72 @@
+{
+  "overall_score": 78,
+  "tier": "A",
+  "viral_probability": 65,
+  "dimensions": {
+    "rhythm": {
+      "score": 16,
+      "max_score": 20,
+      "name": "Hook 吸引力",
+      "comment": "开场钩子强"
+    },
+    "audience": {
+      "score": 17,
+      "max_score": 20,
+      "name": "情绪操控",
+      "comment": "情绪曲线饱满"
+    },
+    "production": {
+      "score": 15,
+      "max_score": 20,
+      "name": "爽点与反转",
+      "comment": "爽点密度合理"
+    },
+    "character": {
+      "score": 14,
+      "max_score": 20,
+      "name": "角色商业价值",
+      "comment": "主角人设清晰"
+    },
+    "social": {
+      "score": 12,
+      "max_score": 20,
+      "name": "付费卡点",
+      "comment": "付费点埋设到位"
+    },
+    "spread": {
+      "score": 4,
+      "max_score": 5,
+      "name": "平台传播",
+      "comment": "话题性强"
+    }
+  },
+  "summary": "整体商业潜力良好",
+  "problems": [
+    {
+      "title": "第 3 集节奏偏慢",
+      "severity": "medium",
+      "location": "第 3 集",
+      "detail": "冲突密度低于其他集"
+    },
+    {
+      "title": "付费卡点位置可前置",
+      "severity": "low",
+      "location": "第 5 集",
+      "detail": "付费墙可提前"
+    }
+  ],
+  "suggestions": [
+    {
+      "title": "加密第 3 集冲突",
+      "priority": "high",
+      "lift": 5,
+      "detail": "加入关键误会"
+    },
+    {
+      "title": "前置付费卡点",
+      "priority": "high",
+      "lift": 8,
+      "detail": "核心反转提前"
+    }
+  ]
+}
