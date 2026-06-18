@@ -2874,9 +2874,12 @@ function agentQuickCmd(cmd) {
 }
 
 // ========== 状态持久化 ==========
+const STUDIO_STATE_VERSION = 2;
+
 function saveState() {
     try {
         localStorage.setItem('manju_studio_state', JSON.stringify({
+            version: STUDIO_STATE_VERSION,
             scripts: SCRIPTS.map(function(s) { return { id: s.id, _score: s._score, _tier: s._tier, _prob: s._prob, current_version: s.current_version, _has_report: s._has_report, _saved: s._saved, _rescored: s._rescored, _prodDone: s._prodDone, _export_id: s._export_id, _score_delta: s._score_delta, _dimensions: s._dimensions, workflowState: s.workflowState }; }),
             state: STATE,
             agentHistoryByProject: AGENT_HISTORY_BY_PROJECT
@@ -2898,6 +2901,11 @@ function restoreScriptStates() {
     // 在 SCRIPTS 加载完成后，恢复之前保存的脚本状态
     try {
         var data = JSON.parse(localStorage.getItem('manju_studio_state') || '{}');
+        // 版本校验：无 version 或版本不匹配 → 丢弃旧缓存
+        if (!data.version || data.version !== STUDIO_STATE_VERSION) {
+            localStorage.removeItem('manju_studio_state');
+            return;
+        }
         if (data.scripts && data.scripts.length > 0) {
             data.scripts.forEach(function(saved) {
                 var s = getS(saved.id);
@@ -2912,6 +2920,18 @@ function restoreScriptStates() {
                     s._score_delta = saved._score_delta || saved.score_delta;
                     s._dimensions = saved._dimensions || saved.dimensions || s._dimensions;
                     if (saved.workflowState) s.workflowState = saved.workflowState;
+                }
+            });
+            // 纠偏：如果 workflowStatus=analyzing 但实际已有报告，自动修正
+            data.scripts.forEach(function(saved) {
+                var s = getS(saved.id);
+                if (s && s.workflowState) {
+                    if (s.workflowState.workflowStatus === 'analyzing') {
+                        if (s._score || s._has_report) {
+                            s.workflowState.workflowStatus = 'analysis_done';
+                        }
+                        s.workflowState.isRunning = false;
+                    }
                 }
             });
         }
