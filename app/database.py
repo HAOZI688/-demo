@@ -92,6 +92,7 @@ class AnalysisReport(Base):
     report_content = Column(Text, default="")
     features_json = Column(Text, default="{}")
     rule_evidence_json = Column(Text, default="{}")
+    summary_json = Column(Text, default="{}")
     duration = Column(Float, default=0)
 
     # 版本溯源

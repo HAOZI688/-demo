@@ -3165,15 +3165,17 @@ function renderAnalysisDetail(d, s, v1ReportId, v2ReportId) {
         html += '</div>';
     }
 
-    // 执行摘要
-    if (es.one_line || es.core_strength) {
+    // 执行摘要 — 从 d.summary 读取商业评估口径字段
+    var sm = d.summary || {};
+    if (sm.submission_fit || sm.format_quality || sm.commercial_verdict) {
         html += '<div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:12px">';
-        html += '<div style="font-size:10px;font-weight:600;color:#111827;margin-bottom:6px;border-bottom:1px solid #e5e7eb;padding-bottom:4px">执行摘要</div>';
-        if (es.one_line) html += '<div style="font-size:10px;color:#4b5563;margin-bottom:4px"><b>一句话：</b>' + esc(es.one_line) + '</div>';
-        if (es.core_strength) html += '<div style="font-size:9px;color:#16a34a;margin-bottom:3px">✅ 优势：' + esc(es.core_strength) + '</div>';
-        if (es.main_weakness) html += '<div style="font-size:9px;color:#b91c1c;margin-bottom:3px">⚠ 短板：' + esc(es.main_weakness) + '</div>';
-        if (es.biggest_risk) html += '<div style="font-size:9px;color:#d97706;margin-bottom:3px">🔴 风险：' + esc(es.biggest_risk) + '</div>';
-        if (es.recommended_action) html += '<div style="font-size:9px;color:#7c3aed;margin-bottom:3px">💡 建议：' + esc(es.recommended_action) + '</div>';
+        html += '<div style="font-size:10px;font-weight:600;color:#111827;margin-bottom:6px;border-bottom:1px solid #e5e7eb;padding-bottom:4px">商业评估摘要</div>';
+        if (sm.submission_fit) html += '<div style="font-size:9px;color:#4b5563;margin-bottom:4px"><b>📮 投稿适配：</b>' + esc(sm.submission_fit) + '</div>';
+        if (sm.format_quality) html += '<div style="font-size:9px;color:#16a34a;margin-bottom:3px"><b>✅ 内容质量：</b>' + esc(sm.format_quality) + '</div>';
+        if (sm.production_difficulty) html += '<div style="font-size:9px;color:#6b7280;margin-bottom:3px"><b>🔧 制作难度：</b>' + esc(sm.production_difficulty) + '</div>';
+        if (sm.commercial_verdict) html += '<div style="font-size:9px;color:#7c3aed;margin-bottom:3px"><b>💰 商业结论：</b>' + esc(sm.commercial_verdict) + '</div>';
+        if (sm.main_risk) html += '<div style="font-size:9px;color:#b91c1c;margin-bottom:3px"><b>🔴 主要风险：</b>' + esc(sm.main_risk) + '</div>';
+        if (sm.recommended_next_step) html += '<div style="font-size:9px;color:#d97706;margin-bottom:3px"><b>📋 下一步：</b>' + esc(sm.recommended_next_step) + '</div>';
         html += '</div>';
     }
 

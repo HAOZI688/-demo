@@ -276,6 +276,7 @@ async def get_script(script_id: int):
                 "overall_score": report.overall_score,
                 "tier": report.prediction_tier,
                 "probability": report.viral_probability,
+                "has_markdown": bool(report.report_content),
                 "dimensions": {
                     "rhythm": report.rhythm_score,
                     "audience": report.audience_score,
@@ -345,6 +346,8 @@ async def analyze_script(script_id: int, req: dict = None):
 
     # 写 AnalysisReport
     dims = result.get("dimensions", {})
+    summary = result.get("summary", {})
+    markdown_report = result.get("markdown_report", "")
     db = SessionLocal()
     try:
         s = db.query(Script).filter(Script.id == script_id).first()
@@ -365,6 +368,8 @@ async def analyze_script(script_id: int, req: dict = None):
             genre=genre,
             duration=time.time() - started,
             model_version=f"mock-v{settings.APP_VERSION}" + ("-fallback" if settings.USE_LLM else ""),
+            report_content=markdown_report,
+            summary_json=json.dumps(summary, ensure_ascii=False),
         )
         db.add(report)
         db.commit()
@@ -557,6 +562,9 @@ async def analysis_record_detail(record_id: int):
             "parent_report_id": None,
             "dimension_deltas": {},
             "created_at": r.created_at.isoformat() if r.created_at else None,
+            "markdown_report": r.report_content or "",
+            "summary": json.loads(r.summary_json or "{}"),
+            "has_markdown": bool(r.report_content),
         }
     finally:
         db.close()

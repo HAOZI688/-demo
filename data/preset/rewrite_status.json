@@ -1,11 +1,10 @@
-{"status":"ready","script_id":1,"rewrite_version":"V2","chapters":[{"title":"第 1 章 归来","content":"男主从海外归来，发现家族企业被篡夺","status":"done","accepted":true}],"accepted":1,"total":3,"score_lift":8}
 {
   "status": "ready",
   "has_rewrite": true,
-  "script_id": 1,
+  "script_id": -1,
   "rewrite_version": "V2",
-  "latest_version_id": 3,
-  "latest_rewrite_id": 3,
+  "latest_version_id": -1,
+  "latest_rewrite_id": -1,
   "chapters": [
     {"title": "第 1 章 归来", "content": "男主从海外归来，发现家族企业被篡夺", "status": "done", "accepted": true},
     {"title": "第 2 章 反击", "content": "男主利用隐藏实力展开反击", "status": "done", "accepted": true}
@@ -14,8 +13,8 @@
   "total": 3,
   "score_lift": 8,
   "changes": [
-    {"id": 1, "type": "add", "location": "第 1 章", "content": "加入开场悬念", "status": "accepted"},
-    {"id": 2, "type": "rewrite", "location": "第 2 章", "content": "强化冲突密度", "status": "accepted"}
+    {"id": -1, "type": "add", "location": "第 1 章", "content": "加入开场悬念", "status": "accepted"},
+    {"id": -2, "type": "rewrite", "location": "第 2 章", "content": "强化冲突密度", "status": "accepted"}
   ],
   "rounds": 1,
   "max_rounds": 3
