@@ -1,0 +1,53 @@
+name: Rollback UAT
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: '要回滚到的 commit SHA（必填）'
+        required: true
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rollback on UAT server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.UAT_HOST }}
+          username: ${{ secrets.UAT_USER }}
+          key: ${{ secrets.UAT_SSH_KEY }}
+          script: |
+            cd /srv/manju-demo
+
+            # 备份当前 db
+            if [ -f data/manju.db ]; then
+              cp data/manju.db "data/manju.db.bak.$(date +%s)"
+            fi
+
+            # 回滚到指定 commit
+            git fetch origin
+            git reset --hard ${{ inputs.commit_sha }}
+
+            # 还原 db（如果回滚后没有 db 文件）
+            if [ ! -f data/manju.db ]; then
+              LATEST_BAK=$(ls -t data/manju.db.bak.* 2>/dev/null | head -1)
+              if [ -n "$LATEST_BAK" ]; then
+                cp "$LATEST_BAK" data/manju.db
+              fi
+            fi
+
+            # 装依赖
+            source .venv/bin/activate
+            pip install -r requirements.txt -q
+
+            # 保持 USE_LLM=0（回滚时不改变环境配置）
+            cat > .env.runtime << RUNTIMEEOF
+            USE_LLM=0
+            RUNTIMEEOF
+
+            # 重启
+            sudo systemctl restart manju-demo
+            sleep 3
+
+            # 健康检查
+            curl -f http://localhost:8765/api/health || exit 1

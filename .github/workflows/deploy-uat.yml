@@ -1,0 +1,67 @@
+name: Deploy UAT
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      use_llm:
+        description: '启用 LLM（默认 false）'
+        type: boolean
+        default: false
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to UAT
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.UAT_HOST }}
+          username: ${{ secrets.UAT_USER }}
+          key: ${{ secrets.UAT_SSH_KEY }}
+          script: |
+            cd /srv/manju-demo
+
+            # 备份当前 db
+            if [ -f data/manju.db ]; then
+              cp data/manju.db "data/manju.db.bak.$(date +%s)"
+            fi
+
+            # 拉代码
+            git fetch origin
+            git reset --hard origin/main
+
+            # 还原 db（如果新版本没有 db 文件）
+            if [ ! -f data/manju.db ]; then
+              LATEST_BAK=$(ls -t data/manju.db.bak.* 2>/dev/null | head -1)
+              if [ -n "$LATEST_BAK" ]; then
+                cp "$LATEST_BAK" data/manju.db
+              fi
+            fi
+
+            # 装依赖
+            source .venv/bin/activate
+            pip install -r requirements.txt -q
+
+            # 重新生成运行时环境文件（不追加）
+            if [ "${{ inputs.use_llm }}" = "true" ]; then
+              cat > .env.runtime << RUNTIMEEOF
+            USE_LLM=1
+            TOKEN_API_KEY=${{ secrets.TOKEN_API_KEY }}
+            TOKEN_API_BASE=${{ secrets.TOKEN_API_BASE }}
+            TOKEN_MODEL_NAME=${{ secrets.TOKEN_MODEL_NAME }}
+            RUNTIMEEOF
+            else
+              cat > .env.runtime << RUNTIMEEOF
+            USE_LLM=0
+            RUNTIMEEOF
+            fi
+
+            # 重启
+            sudo systemctl restart manju-demo
+            sleep 3
+
+            # 健康检查
+            curl -f http://localhost:8765/api/health || exit 1

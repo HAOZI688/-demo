@@ -1,0 +1,16 @@
+[Unit]
+Description=Manju Demo UAT
+After=network.target
+
+[Service]
+Type=simple
+User=manju
+WorkingDirectory=/srv/manju-demo
+Environment="PATH=/srv/manju-demo/.venv/bin"
+EnvironmentFile=-/srv/manju-demo/.env.runtime
+ExecStart=/srv/manju-demo/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8765
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
