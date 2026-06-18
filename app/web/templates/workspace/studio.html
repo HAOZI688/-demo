@@ -1940,6 +1940,7 @@ var ANALYZE_STEPS = [
 
 // ========== 全局分析进度控制（防止跨剧本串线）==========
 var _currentAnalyzeTimer = null;
+var _currentAnalyzeElapsedTimer = null;
 var _currentAnalyzeScriptId = null;
 
 function showAnalyzeProgress(taskId, scriptTitle, scriptId) {
