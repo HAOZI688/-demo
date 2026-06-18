@@ -1022,7 +1022,8 @@ async function refreshScriptDetail(scriptId) {
                 var lastV = s.versions[s.versions.length - 1];
                 w.selectedVersionId = lastV.id;
             }
-            if (!detail.score) w.workflowStatus = 'imported';
+            // P0: 不再由顶层 score 字段推断状态 — 由分析记录查询(Step 2)决定
+            // if (!detail.score) w.workflowStatus = 'imported';
         }
 
         // 2. 刷新分析报告
@@ -1367,7 +1368,7 @@ function buildAnalysisCard(s) {
                (w.lastError ? '<div class="body-row" style="font-size:8px;color:#b91c1c;margin-top:2px;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">' + esc(w.lastError.substring(0, 100)) + '</div>' : '') +
                '<div class="body-row" style="color:#9ca3af;font-size:8px">点击重试按钮</div>';
         actions = '<button class="b bg" style="color:#b91c1c;border-color:#fecaca" onclick="retryFailed(' + s.id + ')">🔄 重试</button>';
-    } else if (w.isRunning && w.workflowStatus === 'analyzing') {
+    } else if (w.isRunning && w.workflowStatus === 'analyzing' && !s._has_report) {
         tag = '<span class="node-tag st-act">分析中...</span>';
         body = '<div class="body-row">正在调用 AI 模型...</div><div class="body-row" style="color:#9ca3af;font-size:8px">请稍候，通常需要 30-120 秒</div>';
         actions = '<button class="b bg" disabled>分析中...</button>';
@@ -2081,19 +2082,20 @@ async function runAnalyze(scriptId) {
         toast('分析异常: ' + e.message, 'error');
         addAgentLog('❌ 分析异常: ' + e.message);
         renderAll();
+    } finally {
+        w.isRunning = false;
+        if (_currentAnalyzeTimer) {
+            clearInterval(_currentAnalyzeTimer);
+            _currentAnalyzeTimer = null;
+        }
+        if (_currentAnalyzeElapsedTimer) {
+            clearInterval(_currentAnalyzeElapsedTimer);
+            _currentAnalyzeElapsedTimer = null;
+        }
+        closeNonBlocking('nb-analyzing');
+        saveState();
+        logState('runAnalyze end');
     }
-    w.isRunning = false;
-    if (_currentAnalyzeTimer) {
-        clearInterval(_currentAnalyzeTimer);
-        _currentAnalyzeTimer = null;
-    }
-    if (_currentAnalyzeElapsedTimer) {
-        clearInterval(_currentAnalyzeElapsedTimer);
-        _currentAnalyzeElapsedTimer = null;
-    }
-    closeNonBlocking('nb-analyzing');
-    saveState();
-    logState('runAnalyze end');
 }
 
 // ========== 改写步骤 ==========
